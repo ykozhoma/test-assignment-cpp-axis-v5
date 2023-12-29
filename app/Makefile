@@ -12,7 +12,7 @@ CXXFLAGS += -I/usr/include/libxml2
 CPPFLAGS = -Os -pipe -std=c++17
 
 LDLIBS += -L /axis/opencv/usr/lib -L /axis/openblas/usr/lib
-LDLIBS += -L /usr/lib/aarch64-linux-gnu 
+LDLIBS += -L /usr/lib/$(ARCH)-linux-gnu
 LDLIBS += -lm -lstdc++ -lopencv_core -lopencv_imgproc -lopencv_imgcodecs -lopencv_videoio
 LDLIBS += -lvdostream -lfido -lcapaxis -lstatuscache -lopenblas -lxml2 -lcurl
 LDLIBS += $(shell PKG_CONFIG_PATH=$(PKG_CONFIG_PATH) pkg-config --libs $(PKGS))
