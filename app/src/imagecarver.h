@@ -53,7 +53,6 @@ namespace whykozhoma
         std::forward_list<EncodedImage> m_imageList;
         std::mutex m_imageListMtx;
         std::condition_variable m_imageListCV;
-        bool m_imageListReady = false;
     };
 }//namespace
 #endif

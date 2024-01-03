@@ -108,7 +108,7 @@ namespace whykozhoma
 
                 std::unique_lock lock(m_imageListMtx);
                 m_imageList.push_front({timestampMs, std::move(xmlString)});
-                m_imageListReady = true;
+                lock.unlock();
                 m_imageListCV.notify_one();
             }
             );
@@ -155,11 +155,8 @@ namespace whykozhoma
     void ImageCarver::SendXMLViaHttpPost()
     {
         std::unique_lock lock(m_imageListMtx);
-        m_imageListCV.wait(lock, [this]{ return m_imageListReady; });
+        m_imageListCV.wait(lock, [this]{ return !m_imageList.empty(); });
 
-        if (m_imageList.empty())
-            throw std::runtime_error("No Image data!");
-        
         CURL *curl = nullptr;
 
         curl = curl_easy_init();
@@ -181,6 +178,7 @@ namespace whykozhoma
             {
                 curl_easy_cleanup(curl);
                 curl_slist_free_all(headers);
+                curl_global_cleanup();
 
                 throw std::runtime_error(
                 std::string("curl_easy_perform() failed: ") + curl_easy_strerror(res)
@@ -188,7 +186,6 @@ namespace whykozhoma
             }
 
             m_imageList.pop_front();
-            m_imageListReady = false;
 
             curl_easy_cleanup(curl);
             curl_slist_free_all(headers);
