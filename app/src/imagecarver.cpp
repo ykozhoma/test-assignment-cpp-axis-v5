@@ -97,8 +97,10 @@ namespace whykozhoma
                     std::lock_guard<std::mutex> lock(m_videoCaptureMtx);
                     m_videoCapture.read(m_frameBuffer);
 
-                    if (m_frameBuffer.empty())
+                    if (m_frameBuffer.empty()) {
+                        curl_global_cleanup();
                         throw std::runtime_error("Failed to fetch frame.");
+                    }
 
                     timestampMs = m_videoCapture.get(cv::CAP_PROP_POS_MSEC);
                     xmlString = AddImageToXML(timestampMs);
