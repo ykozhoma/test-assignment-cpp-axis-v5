@@ -70,6 +70,7 @@ namespace whykozhoma
         try { m_videoCapture.grab(); }
         catch(const std::exception& e)
         {
+            curl_global_cleanup();
             std::cerr << "Failed to open stream: " << e.what() << std::endl;
             throw;
         }
